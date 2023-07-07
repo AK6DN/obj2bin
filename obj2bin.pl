@@ -401,6 +401,7 @@ foreach my $pass (1..2) {
 	my $OBJ = FileHandle->new("< ".$objfile);
 	die "Error: can't open input object file '$objfile'\n" unless defined $OBJ;
 	printf $LOG "\n\nPROCESS PASS %d FILE %d '%s'\n\n", $pass, $numb+1, $objfile if $DEBUG;
+	binmode($OBJ);
 	while (my @rec = &read_rec($OBJ)) { &parse_rec($numb+1, $pass, \@rec); }
 	$OBJ->close;
     }
@@ -501,6 +502,8 @@ if ($romtype eq 'BOOT' || $romtype eq 'DIAG') {
     # If the byte length is exactly six, the block is the last on the tape, and
     # there is no checksum.  If the origin is not 000001, then the origin is
     # the PC at which to start the program.
+
+    binmode($OUT);
 
     $bytesper = 128 if $bytesper <= 0;
 
