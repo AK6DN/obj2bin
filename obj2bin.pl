@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 #!/usr/local/bin/perl -w
 
-# Copyright (c) 2005-2016 Don North
+# Copyright (c) 2005-2023 Don North
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -198,6 +198,7 @@ Modification history:
   2017-05-04 v1.95 donorth - Updated capability to read multiple input .obj files.
   2020-03-06 v2.0  donorth - Updated help documentation and README.md file.
   2020-03-10 v2.1  donorth - Broke down and added RSX-11 input format option.
+  2023-07-06 v2.2  donorth - Added binmode($fh) on object input and binary output files.
 
 =cut
 
@@ -218,7 +219,7 @@ BEGIN { unshift(@INC, $FindBin::Bin);
 # external local modules
 
 # generic defaults
-my $VERSION = 'v2.1'; # version of code
+my $VERSION = 'v2.2'; # version of code
 my $HELP = 0; # set to 1 for man page output
 my $DEBUG = 0; # set to 1 for debug messages
 my $VERBOSE = 0; # set to 1 for verbose messages
