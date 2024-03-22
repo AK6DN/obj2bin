@@ -101,6 +101,10 @@ Generate a a sequence of 'L addr' / 'D data' commands for downloading
 a program via a terminal emulator thru the M9312 user command interface.
 Suitable only for really small test programs.
 
+=item B<--raw>
+
+Generate raw format file
+
 =item B<--binary>
 
 Generate binary format load records of the program image (paper
@@ -246,6 +250,7 @@ my $NOERROR = GetOptions( "help"        => \$HELP,
 			  "boot"        => sub { $romtype = 'BOOT'; },
 			  "console"     => sub { $romtype = 'DIAG'; },
 			  "binary"      => sub { $romtype = 'BINA'; },
+			  "raw"         => sub { $romtype = 'RAWA'; },        
 			  "ascii"       => sub { $romtype = 'ASC9'; },
 			  "rt11"        => sub { $objtype = 'RT11'; },
 			  "rsx11"       => sub { $objtype = 'RSX11'; },
@@ -340,7 +345,7 @@ if ($romtype eq 'BOOT') {
     $romfill = 0x00; # rom fill pattern
     $rombase = 0165000; # base address of rom
 
-} elsif ($romtype eq 'BINA' || $romtype eq 'ASC9') {
+} elsif ($romtype eq 'BINA' || $romtype eq 'ASC9' || $romtype eq 'RAWA') {
 
     # program load image ... 56KB address space maximum
     %excaddr = ( ); # bytes to be skipped in rom crc calc
@@ -444,7 +449,7 @@ if ($romtype eq 'BOOT' || $romtype eq 'DIAG') {
 	$buf[$idx+3] = (($dat>>12)&0xF)^0x1;             # bits  15  14  13 ~12
     }
 
-} elsif ($romtype eq 'BINA' || $romtype eq 'ASC9') {
+} elsif ($romtype eq 'BINA' || $romtype eq 'ASC9' || $romtype eq 'RAWA') {
 
     # only copy the above instruction portion over
     for (my $adr = 0; $adr < $memsize; $adr += 1) {
@@ -540,7 +545,24 @@ if ($romtype eq 'BOOT' || $romtype eq 'DIAG') {
     # start program exec here
     printf $OUT "L %o\r\nS\r\n", $adrmin;
 
-}
+} elsif ($romtype eq 'RAWA') {
+
+
+    binmode($OUT);
+
+    $bytesper = 128 if $bytesper <= 0;
+
+    my $start = $program{START}{ADDRESS};
+
+    sub m ($) { $_[0] & 0xFF; }
+
+    # output the entire PROM buffer as a binary loader file
+    for (my $idx = $adrmin; $idx < $adrmax+1; $idx += $bytesper) {
+	my $cnt = $idx+$bytesper <= $adrmax+1 ? $bytesper : $adrmax+1-$idx; # N bytes or whatever is left
+	my @dat = @buf[$idx..($idx+$cnt-1)]; # get the data
+	print $OUT pack("C*", @dat);
+    }
+} 
 
 # all done
 $OUT->close;
