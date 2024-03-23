@@ -10,6 +10,7 @@ Usage: ./obj2bin.pl [options...] arguments
        --verbose               verbose status reporting
        --boot                  M9312 boot prom .hex
        --console               M9312 console/diagnostic prom .hex
+       --raw		       raw binary data output
        --binary                binary program load image .bin [default]
        --ascii                 ascii m9312 program load image .txt
        --rt11                  read .obj files in RT11 format
@@ -29,7 +30,7 @@ NAME
     obj2bin.pl - Convert a Macro-11 program image to PROM/load format
 
 SYNOPSIS
-    obj2bin.pl [--help] [--debug] [--verbose] [--boot] [--console] [--binary]
+    obj2bin.pl [--help] [--debug] [--verbose] [--boot] [--console] [--raw] [--binary]
     [--ascii] [--rt11] [--rsx11] [--bytes=N] [--nocrc] [--logfile=LOGFILE]
     --outfile=BINFILE OBJFILE
 
@@ -68,6 +69,9 @@ OPTIONS
         Generate a a sequence of 'L addr' / 'D data' commands for downloading
         a program via a terminal emulator thru the M9312 user command
         interface. Suitable only for really small test programs.
+
+    --raw
+        Generate raw data format file.
 
     --binary
         Generate binary format load records of the program image (paper tape
@@ -158,5 +162,7 @@ HISTORY
       2017-05-04 v1.95 donorth - Updated capability to read multiple input .obj files.
       2020-03-06 v2.0  donorth - Updated help documentation and README.md file.
       2020-03-10 v2.1  donorth - Broke down and added RSX-11 input format option.
+      2023-07-06 v2.2  donorth - Added binmode($fh) on object input and binary output files.
+      2024-03-22 v2.3  MattisLind/donorth - Added raw data format output via --raw option.
 
 ```

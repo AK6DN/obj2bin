@@ -45,6 +45,7 @@ S<[--debug]>
 S<[--verbose]>
 S<[--boot]>
 S<[--console]>
+S<[--raw]>
 S<[--binary]>
 S<[--ascii]>
 S<[--rt11]>
@@ -103,7 +104,7 @@ Suitable only for really small test programs.
 
 =item B<--raw>
 
-Generate raw format file
+Generate raw format file.
 
 =item B<--binary>
 
@@ -203,6 +204,7 @@ Modification history:
   2020-03-06 v2.0  donorth - Updated help documentation and README.md file.
   2020-03-10 v2.1  donorth - Broke down and added RSX-11 input format option.
   2023-07-06 v2.2  donorth - Added binmode($fh) on object input and binary output files.
+  2024-03-22 v2.3  MattisLind/donorth - Added raw data format output via --raw option.
 
 =cut
 
@@ -223,7 +225,7 @@ BEGIN { unshift(@INC, $FindBin::Bin);
 # external local modules
 
 # generic defaults
-my $VERSION = 'v2.2'; # version of code
+my $VERSION = 'v2.3'; # version of code
 my $HELP = 0; # set to 1 for man page output
 my $DEBUG = 0; # set to 1 for debug messages
 my $VERBOSE = 0; # set to 1 for verbose messages
@@ -547,14 +549,11 @@ if ($romtype eq 'BOOT' || $romtype eq 'DIAG') {
 
 } elsif ($romtype eq 'RAWA') {
 
+    # raw format data output as just data bytes
 
     binmode($OUT);
 
     $bytesper = 128 if $bytesper <= 0;
-
-    my $start = $program{START}{ADDRESS};
-
-    sub m ($) { $_[0] & 0xFF; }
 
     # output the entire PROM buffer as a binary loader file
     for (my $idx = $adrmin; $idx < $adrmax+1; $idx += $bytesper) {
