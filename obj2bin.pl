@@ -45,8 +45,8 @@ S<[--debug]>
 S<[--verbose]>
 S<[--boot]>
 S<[--console]>
-S<[--raw]>
 S<[--binary]>
+S<[--raw]>
 S<[--ascii]>
 S<[--rt11]>
 S<[--rsx11]>
@@ -102,10 +102,6 @@ Generate a a sequence of 'L addr' / 'D data' commands for downloading
 a program via a terminal emulator thru the M9312 user command interface.
 Suitable only for really small test programs.
 
-=item B<--raw>
-
-Generate raw format file.
-
 =item B<--binary>
 
 Generate binary format load records of the program image (paper
@@ -115,6 +111,10 @@ runnable program images (used to write custom diaqnostics).
 
 Binary format is the default if no other option is specified.
 If more than one option is specified the last one takes effect.
+
+=item B<--raw>
+
+Generate raw data format file.
 
 =item B<--rt11>
 
@@ -294,6 +294,7 @@ unless ($NOERROR
        --boot                  M9312 boot prom .hex
        --console               M9312 console/diagnostic prom .hex
        --binary                binary program load image .bin [default]
+       --raw                   raw binary data output
        --ascii                 ascii m9312 program load image .txt
        --rt11                  read .obj files in RT11 format
        --rsx11                 read .obj files in RSX11 format [default]

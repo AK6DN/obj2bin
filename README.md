@@ -3,15 +3,15 @@
 If run with no options, it prints a usage screen:
 
 ```
-obj2bin.pl v2.1 by Don North (perl 5.03)
+obj2bin.pl v2.3 by Don North (perl 5.036)
 Usage: ./obj2bin.pl [options...] arguments
        --help                  output manpage and exit
        --debug                 enable debug mode
        --verbose               verbose status reporting
        --boot                  M9312 boot prom .hex
        --console               M9312 console/diagnostic prom .hex
-       --raw		       raw binary data output
        --binary                binary program load image .bin [default]
+       --raw		       raw binary data output
        --ascii                 ascii m9312 program load image .txt
        --rt11                  read .obj files in RT11 format
        --rsx11                 read .obj files in RSX11 format [default]
