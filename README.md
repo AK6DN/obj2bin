@@ -3,7 +3,7 @@
 If run with no options, it prints a usage screen:
 
 ```
-obj2bin.pl v2.3 by Don North (perl 5.036)
+obj2bin.pl v2.4 by Don North (perl 5.036)
 Usage: ./obj2bin.pl [options...] arguments
        --help                  output manpage and exit
        --debug                 enable debug mode
@@ -11,7 +11,7 @@ Usage: ./obj2bin.pl [options...] arguments
        --boot                  M9312 boot prom .hex
        --console               M9312 console/diagnostic prom .hex
        --binary                binary program load image .bin [default]
-       --raw		       raw binary data output
+       --raw                   raw binary data output .dat
        --ascii                 ascii m9312 program load image .txt
        --rt11                  read .obj files in RT11 format
        --rsx11                 read .obj files in RSX11 format [default]
@@ -71,7 +71,7 @@ OPTIONS
         interface. Suitable only for really small test programs.
 
     --raw
-        Generate raw data format file.
+        Generate raw data format file of an entire 64Kx8 memory image
 
     --binary
         Generate binary format load records of the program image (paper tape
@@ -147,7 +147,7 @@ EXAMPLES
       obj2bin.pl --verbose --binary --rsx11 --out prftst.bin prftst.obj mac/printf.obj
 
 AUTHOR
-    Don North - donorth <ak6dn _at_ mindspring _dot_ com>
+    Don North - donorth <ak6dn _at_ arrl _dot_ net>
 
 HISTORY
     Modification history:
@@ -164,5 +164,6 @@ HISTORY
       2020-03-10 v2.1  donorth - Broke down and added RSX-11 input format option.
       2023-07-06 v2.2  donorth - Added binmode($fh) on object input and binary output files.
       2024-03-22 v2.3  MattisLind/donorth - Added raw data format output via --raw option.
+      2025-09-11 v2.4  donorth - Updated raw data format to output full 64Kx8 memory image
 
 ```

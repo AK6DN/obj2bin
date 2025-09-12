@@ -205,6 +205,7 @@ Modification history:
   2020-03-10 v2.1  donorth - Broke down and added RSX-11 input format option.
   2023-07-06 v2.2  donorth - Added binmode($fh) on object input and binary output files.
   2024-03-22 v2.3  MattisLind/donorth - Added raw data format output via --raw option.
+  2025-09-11 v2.4  donorth - Updated raw data format to output full 64Kx8 memory image
 
 =cut
 
@@ -225,7 +226,7 @@ BEGIN { unshift(@INC, $FindBin::Bin);
 # external local modules
 
 # generic defaults
-my $VERSION = 'v2.3'; # version of code
+my $VERSION = 'v2.4'; # version of code
 my $HELP = 0; # set to 1 for man page output
 my $DEBUG = 0; # set to 1 for debug messages
 my $VERBOSE = 0; # set to 1 for verbose messages
@@ -294,7 +295,7 @@ unless ($NOERROR
        --boot                  M9312 boot prom .hex
        --console               M9312 console/diagnostic prom .hex
        --binary                binary program load image .bin [default]
-       --raw                   raw binary data output
+       --raw                   raw binary data output .dat
        --ascii                 ascii m9312 program load image .txt
        --rt11                  read .obj files in RT11 format
        --rsx11                 read .obj files in RSX11 format [default]
@@ -556,9 +557,9 @@ if ($romtype eq 'BOOT' || $romtype eq 'DIAG') {
 
     $bytesper = 128 if $bytesper <= 0;
 
-    # output the entire PROM buffer as a binary loader file
-    for (my $idx = $adrmin; $idx < $adrmax+1; $idx += $bytesper) {
-	my $cnt = $idx+$bytesper <= $adrmax+1 ? $bytesper : $adrmax+1-$idx; # N bytes or whatever is left
+    # output the entire PROM buffer as a binary data file
+    for (my $idx = $rombase; $idx < $romsize; $idx += $bytesper) {
+	my $cnt = $idx+$bytesper <= $romsize ? $bytesper : $romsize-$idx; # N bytes or whatever is left
 	my @dat = @buf[$idx..($idx+$cnt-1)]; # get the data
 	print $OUT pack("C*", @dat);
     }
