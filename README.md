@@ -11,7 +11,8 @@ Usage: ./obj2bin.pl [options...] arguments
        --boot                  M9312 boot prom .hex
        --console               M9312 console/diagnostic prom .hex
        --binary                binary program load image .bin [default]
-       --raw                   raw binary data output .dat
+       --image                 binary data output 0..65535 .img
+       --raw                   binary data output ADRmin..ADRmax .raw
        --ascii                 ascii m9312 program load image .txt
        --rt11                  read .obj files in RT11 format
        --rsx11                 read .obj files in RSX11 format [default]
@@ -70,9 +71,6 @@ OPTIONS
         a program via a terminal emulator thru the M9312 user command
         interface. Suitable only for really small test programs.
 
-    --raw
-        Generate raw data format file of an entire 64Kx8 memory image
-
     --binary
         Generate binary format load records of the program image (paper tape
         format) for loading into SIMH or compatible simulators. These files
@@ -81,6 +79,12 @@ OPTIONS
 
         Binary format is the default if no other option is specified. If more
         than one option is specified the last one takes effect.
+
+    --image
+        Generate raw data file that is a full 64Kx8 memory image.
+
+    --raw
+        Generate raw data format file that comprises only bytes ADRmin..ADRmax.
 
     --rt11
         Read input object files in RT-11 format.
@@ -164,6 +168,6 @@ HISTORY
       2020-03-10 v2.1  donorth - Broke down and added RSX-11 input format option.
       2023-07-06 v2.2  donorth - Added binmode($fh) on object input and binary output files.
       2024-03-22 v2.3  MattisLind/donorth - Added raw data format output via --raw option.
-      2025-09-11 v2.4  donorth - Updated raw data format to output full 64Kx8 memory image
+      2025-09-11 v2.4  donorth - Added image data format to output a 64KB full memory image.
 
 ```

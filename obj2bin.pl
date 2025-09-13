@@ -46,6 +46,7 @@ S<[--verbose]>
 S<[--boot]>
 S<[--console]>
 S<[--binary]>
+S<[--image]>
 S<[--raw]>
 S<[--ascii]>
 S<[--rt11]>
@@ -112,9 +113,13 @@ runnable program images (used to write custom diaqnostics).
 Binary format is the default if no other option is specified.
 If more than one option is specified the last one takes effect.
 
+=item B<--image>
+
+Generate raw data file that is a full 64KB memory image.
+
 =item B<--raw>
 
-Generate raw data format file.
+Generate raw data format file that comprises only bytes ADRMIN..ADRMAX.
 
 =item B<--rt11>
 
@@ -205,7 +210,7 @@ Modification history:
   2020-03-10 v2.1  donorth - Broke down and added RSX-11 input format option.
   2023-07-06 v2.2  donorth - Added binmode($fh) on object input and binary output files.
   2024-03-22 v2.3  MattisLind/donorth - Added raw data format output via --raw option.
-  2025-09-11 v2.4  donorth - Updated raw data format to output full 64Kx8 memory image
+  2025-09-11 v2.4  donorth - Added image data format to output a 64KB full memory image.
 
 =cut
 
@@ -253,7 +258,8 @@ my $NOERROR = GetOptions( "help"        => \$HELP,
 			  "boot"        => sub { $romtype = 'BOOT'; },
 			  "console"     => sub { $romtype = 'DIAG'; },
 			  "binary"      => sub { $romtype = 'BINA'; },
-			  "raw"         => sub { $romtype = 'RAWA'; },        
+			  "raw"         => sub { $romtype = 'RAWA'; },
+			  "image"       => sub { $romtype = 'IMGA'; },
 			  "ascii"       => sub { $romtype = 'ASC9'; },
 			  "rt11"        => sub { $objtype = 'RT11'; },
 			  "rsx11"       => sub { $objtype = 'RSX11'; },
@@ -295,7 +301,8 @@ unless ($NOERROR
        --boot                  M9312 boot prom .hex
        --console               M9312 console/diagnostic prom .hex
        --binary                binary program load image .bin [default]
-       --raw                   raw binary data output .dat
+       --image                 binary data output 0..65535 .img
+       --raw                   binary data output ADRmin..ADRmax .raw
        --ascii                 ascii m9312 program load image .txt
        --rt11                  read .obj files in RT11 format
        --rsx11                 read .obj files in RSX11 format [default]
@@ -349,9 +356,9 @@ if ($romtype eq 'BOOT') {
     $romfill = 0x00; # rom fill pattern
     $rombase = 0165000; # base address of rom
 
-} elsif ($romtype eq 'BINA' || $romtype eq 'ASC9' || $romtype eq 'RAWA') {
+} elsif ($romtype eq 'BINA' || $romtype eq 'ASC9' || $romtype eq 'RAWA' || $romtype eq 'IMGA') {
 
-    # program load image ... 56KB address space maximum
+    # program load image ... full address space
     %excaddr = ( ); # bytes to be skipped in rom crc calc
     $memsize = 7*8192; # number of instruction bytes allowed
     $memfill = 0x00; # memory fill pattern
@@ -453,7 +460,7 @@ if ($romtype eq 'BOOT' || $romtype eq 'DIAG') {
 	$buf[$idx+3] = (($dat>>12)&0xF)^0x1;             # bits  15  14  13 ~12
     }
 
-} elsif ($romtype eq 'BINA' || $romtype eq 'ASC9' || $romtype eq 'RAWA') {
+} elsif ($romtype eq 'BINA' || $romtype eq 'ASC9' || $romtype eq 'RAWA' || $romtype eq 'IMGA') {
 
     # only copy the above instruction portion over
     for (my $adr = 0; $adr < $memsize; $adr += 1) {
@@ -551,18 +558,18 @@ if ($romtype eq 'BOOT' || $romtype eq 'DIAG') {
 
 } elsif ($romtype eq 'RAWA') {
 
-    # raw format data output as just data bytes
+    # raw format data output as just data bytes from ADRmin..ADRmax
 
-    binmode($OUT);
+    # output the used PROM buffer as a binary data file
+    binmode($OUT); print $OUT pack("C*", @buf[$adrmin..$adrmax]);
 
-    $bytesper = 128 if $bytesper <= 0;
+} elsif ($romtype eq 'IMGA') {
 
-    # output the entire PROM buffer as a binary data file
-    for (my $idx = $rombase; $idx < $romsize; $idx += $bytesper) {
-	my $cnt = $idx+$bytesper <= $romsize ? $bytesper : $romsize-$idx; # N bytes or whatever is left
-	my @dat = @buf[$idx..($idx+$cnt-1)]; # get the data
-	print $OUT pack("C*", @dat);
-    }
+    # raw format data output as all data bytes 0..65535
+
+    # output the full PROM buffer as a binary data file
+    binmode($OUT); print $OUT pack("C*", @buf[$rombase..$romsize-1]);
+
 } 
 
 # all done
