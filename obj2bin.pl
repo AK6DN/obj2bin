@@ -54,6 +54,7 @@ S<[--rsx11]>
 S<[--bytes=N]>
 S<[--nocrc]>
 S<[--logfile=LOGFILE]>
+S<[--memsize=N]>
 S<--outfile=BINFILE>
 S<OBJFILE>
 
@@ -144,6 +145,11 @@ CRC-16 as the last word in the ROM.
 =item B<--logfile=FILENAME>
 
 Generate debug output into this file.
+
+=item B<--memsize=N>
+
+Specify memory size limit. Works in conjunction with --raw or --img output types. If not specified,
+defaults to 0160000. Useful for creating ROM code to be placed in high addresses.
 
 =item B<--outfile=FILENAME>
 
@@ -238,7 +244,7 @@ my $VERBOSE = 0; # set to 1 for verbose messages
 
 # specific defaults
 my $crctype = 'CRC-16'; # type of crc calc to do
-my $memsize; # number of instruction bytes allowed
+my $memsize = undef; # number of instruction bytes allowed
 my $memfill; # memory fill pattern
 my %excaddr; # words to be skipped in rom crc calc
 my $rombase; # base address of rom image
@@ -267,6 +273,7 @@ my $NOERROR = GetOptions( "help"        => \$HELP,
 			  "nocrc"       => \$nocrc,
 			  "outfile=s"   => \$outfile,
 			  "logfile=s"   => \$logfile,
+			  "memsize=i"   => \$memsize
 			  );
 
 # init
@@ -360,7 +367,9 @@ if ($romtype eq 'BOOT') {
 
     # program load image ... full address space
     %excaddr = ( ); # bytes to be skipped in rom crc calc
-    $memsize = 7*8192; # number of instruction bytes allowed
+    if (!defined($memsize)) {
+        $memsize = 7*8192; # number of instruction bytes allowed
+    }
     $memfill = 0x00; # memory fill pattern
     $romsize = 8*8192; # number of rom addresses (must be a power of two)
     $romfill = 0x00; # image fill pattern
