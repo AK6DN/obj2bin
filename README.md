@@ -3,7 +3,7 @@
 If run with no options, it prints a usage screen:
 
 ```
-obj2bin.pl v2.4 by Don North (perl 5.036)
+obj2bin.pl v2.5 by Don North (perl 5.036)
 Usage: ./obj2bin.pl [options...] arguments
        --help                  output manpage and exit
        --debug                 enable debug mode
@@ -13,6 +13,7 @@ Usage: ./obj2bin.pl [options...] arguments
        --binary                binary program load image .bin [default]
        --image                 binary data output 0..65535 .img
        --raw                   binary data output ADRmin..ADRmax .raw
+       --memsize=N             set usable memory size, default 0160000
        --ascii                 ascii m9312 program load image .txt
        --rt11                  read .obj files in RT11 format
        --rsx11                 read .obj files in RSX11 format [default]
@@ -32,7 +33,7 @@ NAME
 
 SYNOPSIS
     obj2bin.pl [--help] [--debug] [--verbose] [--boot] [--console] [--raw] [--binary]
-    [--ascii] [--rt11] [--rsx11] [--bytes=N] [--nocrc] [--logfile=LOGFILE]
+    [--memsize=N] [--ascii] [--rt11] [--rsx11] [--bytes=N] [--nocrc] [--logfile=LOGFILE]
     --outfile=BINFILE OBJFILE
 
 DESCRIPTION
@@ -85,6 +86,10 @@ OPTIONS
 
     --raw
         Generate raw data format file that comprises only bytes ADRmin..ADRmax.
+
+    --memsize=N
+        Specify memory size limit. Works in conjunction with --raw or --img output types. If not specified,
+        defaults to 0160000. Useful for creating ROM code to be placed in high addresses.
 
     --rt11
         Read input object files in RT-11 format.
@@ -169,5 +174,6 @@ HISTORY
       2023-07-06 v2.2  donorth - Added binmode($fh) on object input and binary output files.
       2024-03-22 v2.3  MattisLind/donorth - Added raw data format output via --raw option.
       2025-09-11 v2.4  donorth - Added image data format to output a 64KB full memory image.
+      2026-09-04 v2.5  Sonic-Amiga/donorth - Added --memsize=N option to set upper memory limit
 
 ```

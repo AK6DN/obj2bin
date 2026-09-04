@@ -48,13 +48,13 @@ S<[--console]>
 S<[--binary]>
 S<[--image]>
 S<[--raw]>
+S<[--memsize=N]>
 S<[--ascii]>
 S<[--rt11]>
 S<[--rsx11]>
 S<[--bytes=N]>
 S<[--nocrc]>
 S<[--logfile=LOGFILE]>
-S<[--memsize=N]>
 S<--outfile=BINFILE>
 S<OBJFILE>
 
@@ -122,6 +122,11 @@ Generate raw data file that is a full 64KB memory image.
 
 Generate raw data format file that comprises only bytes ADRMIN..ADRMAX.
 
+=item B<--memsize=N>
+
+Specify memory size limit. Works in conjunction with --raw or --img output types. If not specified,
+defaults to 0160000. Useful for creating ROM code to be placed in high addresses.
+
 =item B<--rt11>
 
 Read input object files in RT-11 format.
@@ -145,11 +150,6 @@ CRC-16 as the last word in the ROM.
 =item B<--logfile=FILENAME>
 
 Generate debug output into this file.
-
-=item B<--memsize=N>
-
-Specify memory size limit. Works in conjunction with --raw or --img output types. If not specified,
-defaults to 0160000. Useful for creating ROM code to be placed in high addresses.
 
 =item B<--outfile=FILENAME>
 
@@ -217,6 +217,7 @@ Modification history:
   2023-07-06 v2.2  donorth - Added binmode($fh) on object input and binary output files.
   2024-03-22 v2.3  MattisLind/donorth - Added raw data format output via --raw option.
   2025-09-11 v2.4  donorth - Added image data format to output a 64KB full memory image.
+  2026-09-04 v2.5  Sonic-Amiga/donorth - Added --memsize=N option to set upper memory limit
 
 =cut
 
@@ -237,7 +238,7 @@ BEGIN { unshift(@INC, $FindBin::Bin);
 # external local modules
 
 # generic defaults
-my $VERSION = 'v2.4'; # version of code
+my $VERSION = 'v2.5'; # version of code
 my $HELP = 0; # set to 1 for man page output
 my $DEBUG = 0; # set to 1 for debug messages
 my $VERBOSE = 0; # set to 1 for verbose messages
@@ -310,6 +311,7 @@ unless ($NOERROR
        --binary                binary program load image .bin [default]
        --image                 binary data output 0..65535 .img
        --raw                   binary data output ADRmin..ADRmax .raw
+       --memsize=N             set usable memory size, default 0160000
        --ascii                 ascii m9312 program load image .txt
        --rt11                  read .obj files in RT11 format
        --rsx11                 read .obj files in RSX11 format [default]
